@@ -1,28 +1,28 @@
-Function PopulateFilteredLogDefinition { 
+Function PopulateIISLogDefinition { 
     Get-IIS-Stuff
 
     #region LogDefinition
 
     $LogDef = @()
-    $FilteredSiteInfo = @()
+    $FilteredIISSiteInfo = @()
     #endregion
 
-    if ($FilteredSitesIDs.Count -gt 1) {
-        foreach ($siteid in $FilteredSitesIDs) {
-            $SiteDetails = Get-Website | Where-Object { $_.ID -eq "$siteid" }
-            $FilteredSiteInfo += $SiteDetails
+    if ($IISFilteredSitesIDs.Count -gt 1) {
+        foreach ($IISsiteid in $IISFilteredSitesIDs) {
+            $SiteDetails = Get-Website | Where-Object { $_.ID -eq "$IISsiteid" }
+            $FilteredIISSiteInfo += $SiteDetails
         } 
     }
     else {
-        foreach ($siteid in $FilteredSitesIDs) {
-            $SiteDetails = Get-Website | Where-Object { $_.ID -eq "$siteid" }
-            $FilteredSiteInfo += $SiteDetails 
+        foreach ($IISsiteid in $IISFilteredSitesIDs) {
+            $SiteDetails = Get-Website | Where-Object { $_.ID -eq "$IISsiteid" }
+            $FilteredIISSiteInfo += $SiteDetails 
         }
     }
     
 
     #region getSiteData
-    foreach ($siteinfo in $FilteredSiteInfo) {
+    foreach ($siteinfo in $FilteredIISSiteInfo) {
         #region LogDefQuery
         $LogDefQuery = New-Object PsObject
         $LogDefQuery | Add-Member -MemberType NoteProperty -Name ComputerName -Value ''
@@ -45,7 +45,7 @@ Function PopulateFilteredLogDefinition {
     #endregion
 
     #region getSiteLogs
-    foreach ($siteinfo in $FilteredSiteInfo) {
+    foreach ($siteinfo in $FilteredIISSiteInfo) {
         #region LogDefQuery
         $LogDefQuery = New-Object PsObject
         $LogDefQuery | Add-Member -MemberType NoteProperty -Name ComputerName -Value ''
@@ -67,7 +67,7 @@ Function PopulateFilteredLogDefinition {
     }    
     #region getSiteFREBS
 
-    foreach ($siteinfo in $FilteredSiteInfo) {
+    foreach ($siteinfo in $FilteredIISSiteInfo) {
         #region LogDefQuery
         $LogDefQuery = New-Object PsObject
         $LogDefQuery | Add-Member -MemberType NoteProperty -Name ComputerName -Value ''
@@ -203,7 +203,7 @@ Function PopulateFilteredLogDefinition {
 
     $LogDefQuery.ComputerName = $env:COMPUTERNAME
     $LogDefQuery.Level = "Server"
-    $LogDefQuery.Location = $Global:FilteredIISLogsDefinition
+    $LogDefQuery.Location = $Global:IISLogsDefinition
     $LogDefQuery.LogName = "LogDefinition"
     $LogDefQuery.Product = "Tool"
     $LogDefQuery.TypeInfo = "File"
@@ -235,13 +235,13 @@ Function PopulateFilteredLogDefinition {
 
     #endregion
 
-    $LogDef | Export-Csv $FilteredIISLogsDefinition -NoTypeInformation -Delimiter ","
+    $LogDef | Export-Csv $IISLogsDefinition -NoTypeInformation -Delimiter ","
 }
 function GenerateSiteOverview {
     $Global:SiteOverview = @()
-    $FilteredSiteInfo = Get-Website
+    $FilteredIISSiteInfo = Get-Website
    
-    foreach ($siteinfo in $FilteredSiteInfo) {
+    foreach ($siteinfo in $FilteredIISSiteInfo) {
         $IISDefQuery = New-Object PsObject
 
         $IISDefQuery | Add-Member -MemberType NoteProperty -Name SiteName -Value ''

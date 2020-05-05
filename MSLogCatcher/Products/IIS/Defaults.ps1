@@ -1,8 +1,11 @@
-$Global:FilteredIISLogsDefinition = "$scriptPath\LogsDefinition\LOGS.CSV"
-$Global:CurentSites = @()
+$Global:IISLogsDefinition = "$scriptPath\Products\IIS\IISLogsDefinition.CSV"
+$Global:CurentIISSites = @()
 $sitesInfo = Get-Website | Sort-Object -Property id
 foreach ($siteinfo in $sitesInfo)
 {
-    $Global:CurentSites += $siteinfo.id
+    $Global:CurentIISSites += $siteinfo.id
 }
-$Global:DefaultFilteredSitesIDs = $Global:CurentSites -join ","
+
+# if we want manual entry edit the DefaultFilteredIISSitesIDs = "1,2,3,"
+
+$Global:DefaultFilteredIISSitesIDs = $Global:CurentIISSites -join ","

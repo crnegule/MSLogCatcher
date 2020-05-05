@@ -1,28 +1,30 @@
 . $scriptPath\Products\IIS\Defaults.ps1
-. $scriptPath\Products\IIS\CatchFilteredIISzip.ps1
+. $scriptPath\Products\IIS\CatchIISZip.ps1
 . $scriptPath\Products\IIS\GetIISStuff.ps1
 . $scriptPath\Products\IIS\GetSiteStatus.ps1
-. $scriptPath\Products\IIS\PopulateFilteredLogDefinition.ps1
+. $scriptPath\Products\IIS\PopulateIISLogDefinition.ps1
 
-$filteredstart = $xamlReader.FindName("createFilteredZIP")
+$filteredstart = $xamlReader.FindName("createIISFilteredZIP")
 $days = $xamlReader.FindName("FilteredDays")
-$filteredSiteID = $xamlReader.FindName("FilteredSiteID")
-$sitesDataGrid = $xamlReader.FindName("sitesDataGrid")
-$barCatchStatus = $xamlReader.FindName("StatusBar")
+$filteredIISSiteID = $xamlReader.FindName("filteredIISSiteID")
+$IISsitesDataGrid = $xamlReader.FindName("IISsitesDataGrid")
+$barIISCatchStatus = $xamlReader.FindName("IIStatusBar")
 $update = $xamlReader.FindName("ProgressBarText")
 
 $days.text = $DefaultMaxDays
-$filteredSiteID.text = $DefaultFilteredSitesIDs
+$filteredIISSiteID.text = $DefaultFilteredIISSitesIDs
 $arrproc = New-Object System.Collections.ArrayList
-$CurrentSites = GetSiteStatus 
-$arrproc.addrange(@($CurrentSites))
-$sitesDataGrid.ItemsSource = @($arrproc)
+$CurrentIISSites = GetSiteStatus 
+$arrproc.addrange(@($CurrentIISSites))
+$IISsitesDataGrid.ItemsSource = @($arrproc)
 
 $filteredstart.add_click({
-    $barCatchStatus.value = "0"
+    $barIISCatchStatus.value = "0"
     $MaxDays = $days.text
-    $stringFilteredSitesIDs = $filteredSiteID.text
-    $FilteredSitesIDs = $stringFilteredSitesIDs.split(",", [System.StringSplitOptions]::RemoveEmptyEntries) 
-    $barCatchStatus.value = "100"
-    $update.text = "Zip generated at:  $FilteredZipFile"
+    $stringFilteredSitesIDs = $filteredIISSiteID.text
+    $GLOBAL:IISFilteredSitesIDs = $stringFilteredSitesIDs.split(",", [System.StringSplitOptions]::RemoveEmptyEntries)
+    CatchIISzip 
+    $barIISCatchStatus.value = "100"
+    $update.text = "Zip generated at:  $IISFilteredZipFile"
+    Invoke-Item $ZipOutput
 })

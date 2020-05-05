@@ -1,17 +1,17 @@
-function CatchFilteredIISzip {
+function CatchIISzip {
     $date = Get-Date -Format "yyyy-MM-dd-T-HH-mm-ss"
-    $Time = Get-Date 
-    "$Time Tool was run with for the SiteIDS: $FilteredSitesIDs with LogAge filter set at $MaxDays" | Out-File $ToolLog -Append
-    PopulateFilteredLogDefinition -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages | Out-Null
-    $FilteredLOGSDefinitions = Import-Csv $FilteredIISLogsDefinition
-    $FilteredTempLocation = $scriptPath + "\FilteredMSDT"
+    $IISTime = Get-Date 
+    PopulateIISLogDefinition -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages | Out-Null
+    $FilteredIISLOGSDefinitions = Import-Csv $IISLogsDefinition
+    $FilteredTempLocation = $ZipOutput + "\FilteredIISMSDT"
     If (Test-path $FilteredTempLocation) { Get-ChildItem $FilteredTempLocation | Remove-Item -Recurse -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages }
-    new-item -Path $scriptPath -ItemType "directory" -Name "FilteredMSDT" -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages | Out-Null
-    $Global:FilteredZipFile = $ZipOutput + "\LOGS-" + $date + ".zip"
-    If (Test-path $FilteredZipFile) { Remove-item $FilteredZipFile -Force } 
+    new-item -Path $ZipOutput -ItemType "directory" -Name "FilteredIISMSDT" -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages | Out-Null
+    "$IISTime IISLogCollection was run for  the SiteIDS: $IISFilteredSitesIDs with LogsAges filter set at $Global:MaxDays" | Out-File $ToolLog -Append
+    $Global:IISFilteredZipFile = $ZipOutput + "IIS-LOGS-" + $date + ".zip"
+    If (Test-path $IISFilteredZipFile) { Remove-item $IISFilteredZipFile -Force } 
     $GeneralTempLocation = $FilteredTempLocation + "\General"
     $SiteTempLocation = $FilteredTempLocation + "\Sites"
-    foreach ($FilteredLogDefinition in $FilteredLOGSDefinitions) {
+    foreach ($FilteredLogDefinition in $FilteredIISLOGSDefinitions) {
         if ($FilteredLogDefinition.Level -eq 'Site') {
             if ($FilteredLogDefinition.Product -eq "SitePath" ) {
                 $idFloder = $SiteTempLocation + "\" + $FilteredLogDefinition.LogName
@@ -56,7 +56,7 @@ function CatchFilteredIISzip {
     $ExcludeFilter = @()
     $Errlog = "HTTP*"
     $ExcludeFilter += $Errlog
-    foreach ($id in $FilteredSitesIDs) {
+    foreach ($id in $IISFilteredSitesIDs) {
         $stringtoADD = "*" + $id
         $ExcludeFilter += $stringtoADD
     }
@@ -67,36 +67,36 @@ function CatchFilteredIISzip {
             $logName = $GeneralTempLocation + "\SiteOverview.csv"
             $Global:SiteOverview | Export-csv -Path $logName -NoTypeInformation -Force -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages
             Add-Type -assembly "system.io.compression.filesystem"
-            [io.compression.zipfile]::CreateFromDirectory($FilteredTempLocation, $FilteredZipFile)
+            [io.compression.zipfile]::CreateFromDirectory($FilteredTempLocation, $IISFilteredZipFile)
     
             Remove-Item -Recurse $FilteredTempLocation -Force -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages    
         }
         else {
             
             Add-Type -assembly "system.io.compression.filesystem"
-            [io.compression.zipfile]::CreateFromDirectory($FilteredTempLocation, $FilteredZipFile) 
+            [io.compression.zipfile]::CreateFromDirectory($FilteredTempLocation, $IISFilteredZipFile) 
             Remove-Item -Recurse $FilteredTempLocation -Force -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages 
         }
     }
     else {
         if ($Host.Version.Major -ge 3) {  
             Add-Type -assembly "system.io.compression.filesystem"
-            [io.compression.zipfile]::CreateFromDirectory($FilteredTempLocation, $FilteredZipFile) 
+            [io.compression.zipfile]::CreateFromDirectory($FilteredTempLocation, $IISFilteredZipFile) 
             Remove-Item -Recurse $FilteredTempLocation -Force -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages   
-            "$Time Exception Message: IIS server version is lower than 8.0 so no SiteOverView generated!" | Out-File $ToolLog -Append
+            "$IISTime Exception Message: IIS server version is lower than 8.0 so no SiteOverView generated!" | Out-File $ToolLog -Append
 
         }
 
         else {
-            "$Time Exception Message: IIS server version is lower than 8.0 so no SiteOverView generated!" | Out-File $ToolLog -Append
-            "$Time Exception Message: Zip was not created as system.io.compression.filesystem version could not be loaded!" | Out-File $ToolLog -Append
+            "$IISTime Exception Message: IIS server version is lower than 8.0 so no SiteOverView generated!" | Out-File $ToolLog -Append
+            "$IISTime Exception Message: Zip was not created as system.io.compression.filesystem version could not be loaded!" | Out-File $ToolLog -Append
         }
     }
 
     Foreach ($Message in $ErrorMessages) {
-        $Time = Get-Date
+        $IISTime = Get-Date
         $ErroText = $Message.Exception.Message
-        "$Time Exception Message: $ErroText" | Out-File $ToolLog -Append
+        "$IISTime Exception Message: $ErroText" | Out-File $ToolLog -Append
     }
-    "$Time Tool has Finished running!" | Out-File $ToolLog -Append
+    "$IISTime Tool has Finished running!" | Out-File $ToolLog -Append
 }

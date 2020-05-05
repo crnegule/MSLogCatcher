@@ -1,15 +1,15 @@
 Function Get-IIS-Stuff {
 
-    $Time = Get-Date
+    $IISTime = Get-Date
     
         Import-Module IISAdministration -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages
         Import-Module WebAdministration -ErrorAction silentlycontinue -ErrorVariable +ErrorMessages
-        . $scriptPath\General\GetIISEventLogs.ps1
+        . $scriptPath\Products\IIS\GetIISEventLogs.ps1
         Get-IIS-EventLogs
 
         Foreach ($Message in $ErrorMessages) {
-            $Time = Get-Date
+            $IISTime = Get-Date
             $ErroText = $Message.Exception.Message
-            "$Time Exception Message: $ErroText" | Out-File $ToolLog -Append
+            "$IISTime Exception Message: $ErroText" | Out-File $ToolLog -Append
         }    
 }
