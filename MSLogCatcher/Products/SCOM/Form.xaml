@@ -1,0 +1,5 @@
+<TabItem Header="SCOM" Height="auto" Width="auto" FontSize="20" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True">
+    <ScrollViewer>
+        <Button Name="HSCommunicationScenarioButton" Grid.Row="2" Content="Trace for Communication Scenario" HorizontalAlignment="Left" Height="30" Margin="0,10,10,0" VerticalAlignment="Top" Width="auto" Background="#51c706" FontWeight="Bold" FontSize="12"/>
+    </ScrollViewer>
+</TabItem>

@@ -1,0 +1,25 @@
+<TabItem Header="IIS" Height="auto" Width="auto" FontSize="20" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True">
+    <ScrollViewer>
+        <Grid Background="#DEEFFC" Height="auto" Width="auto" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" x:Name="WhatToDo"/>
+                <RowDefinition Height="5" x:Name="Split1" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="5" x:Name="Split2" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <TextBlock FontSize="12" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" TextWrapping="Wrap" Margin="10,10,0,10"><Run FontWeight="Bold" FontStyle="Italic" Text="How to use:"/><LineBreak/><Run FontWeight="Bold" Text="Filters "/><Run Text=": &#x9;&#x9;"/><Run FontWeight="Bold" Text="Logs Age "/><Run Text="= Age of logs in Days, DEFAULT = 2 Days old logs;"/><LineBreak/><Run Text="&#x9;&#x9;"/><Run FontWeight="Bold" Text="Sites IDs"/><Run Text=" = Comma Separated List of sites we want to collect logs;"/><LineBreak/><Run Text="&#x9;&#x9;DEFAULT  =  ALL SITES hosted on IIS; "/><Run FontStyle="Italic"/><LineBreak/><Run FontStyle="Italic" Text="&#x9;&#x9;To know what ID is for what site look at &quot;Site information&quot; section;"/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Button"/><Run Text=":&#x9;&#x9; "/><Run FontWeight="Bold" Text="Generate ZIP"/><Run Text=" = Will Create Zip For Site IDs "/></TextBlock>
+            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" />
+            <TextBlock FontSize="12" Name="FiteredAgeDescription" Grid.Row="2" Text="Logs Age :" Height="25" Margin="50,15,0,12" VerticalAlignment="Top" HorizontalAlignment="Left" TextAlignment="Center"/>
+            <TextBox x:Name="FilteredDays" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Margin="150,13,0,10" TextWrapping="Wrap" TextAlignment="Center" Text="LogAge" Width="150" FontSize="12"/>
+            <TextBlock Name="FilteredSiteIDDescrition" Grid.Row="2" Text="Site IDs:" Height="25" Margin="55,52,0,12" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="12"/>
+            <TextBox x:Name="FilteredSiteID" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Margin="150,48,0,0" TextWrapping="Wrap" TextAlignment="Center" Text="Comma separated" Width="150" FontSize="12"/>
+            <Button Name="createFilteredZIP" Grid.Row="2" Content="GENERATE ZIP" HorizontalAlignment="Right" Height="30" Margin="0,28,70,0" VerticalAlignment="Top" Width="120" Background="#51c706" FontWeight="Bold" FontSize="12"/>
+            <ProgressBar Grid.Row="2" Minimum="0" Maximum="40" Name="StatusBar" Height="30" Margin="0,89,0,0" Width="auto" Padding="0,0,0,10" VerticalAlignment="Top" FontSize="12"/>
+            <TextBlock Name="ProgressBarText" Grid.Row="2" Height="30" Margin="0,94,0,10" HorizontalAlignment="Center" VerticalAlignment="Top" Width="auto" TextWrapping="Wrap" Text="Files Have not been collected YET" Padding="0,0,0,10" FontStyle="Italic" FontSize="12"/>
+            <GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" />
+            <TextBlock Name="HostedSiteInformation" Grid.Row="4" Text="Site Information" Height="25" Margin="0,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="12" FontWeight="Bold"/>
+            <DataGrid Name="sitesDataGrid" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="auto" Margin="0,40,0,20" Width="auto" FontSize="12"/>
+        </Grid>
+    </ScrollViewer>
+</TabItem>
