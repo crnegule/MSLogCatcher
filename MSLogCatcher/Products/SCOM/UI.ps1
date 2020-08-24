@@ -6,6 +6,8 @@ $Global:OutputTextBlock = $xamlReader.FindName("OutputTextBlock")
 $TraceDurationInSecondsTextBox = $xamlReader.FindName("TraceDurationInSecondsTextBox")
 $TraceDurationInSecondsTextBox.Text = $Global:SecondsToSleepForTrace
 
+$Global:StatusLabel = $xamlReader.FindName("StatusLabel")
+
 $ScenarioComboBox = $xamlReader.FindName("ScenarioComboBox")
 $ScenarioComboBox.Items.Add($Global:Scenario1) | Out-Null
 $ScenarioComboBox.Items.Add($Global:Scenario2) | Out-Null
@@ -22,7 +24,12 @@ $StartTraceButton.add_click({
         $Global:Scenario2
         {
             $Global:CurrentScenario = $Global:Scenario2
-            Write-Host "It is two."
+            StartSubscriptionTracing($TraceDurationInSecondsTextBox.Text)
+        }
+        $Global:Scenario3
+        {
+            $Global:CurrentScenario = $Global:Scenario3
+            StartConfigAndWorkflowLoadingTracing($TraceDurationInSecondsTextBox.Text)
         }
     }
 })
@@ -37,7 +44,11 @@ $StopTraceButton.add_click({
         }
         $Global:Scenario2
         {
-            Write-Host "It is two."
+            StartSubscriptionTracingStop
+        }
+        $Global:Scenario3
+        {
+            StartConfigAndWorkflowLoadingTracingStop
         }
     }
     $Global:CurrentScenario = ""

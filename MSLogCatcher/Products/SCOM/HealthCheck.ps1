@@ -111,25 +111,25 @@ Write-Host "Retrieving Agents"
 $Global:OutputTextBlock.Text += "Retrieving Agents\n"
 $Agents = Get-SCOMAgent
 Write-Host "Retrieving Alerts"
-$Global:OutputTextBlock.Text += "Retrieving Alerts"
+$Global:OutputTextBlock.Text += "Retrieving Alerts\n"
 $Alerts = Get-SCOMAlert
 Write-Host "Retrieving Groups"
-$Global:OutputTextBlock.Text += "Retrieving Groups"
+$Global:OutputTextBlock.Text += "Retrieving Groups\n"
 $Groups = Get-SCOMGroup
 Write-Host "Retrieving Management Group"
-$Global:OutputTextBlock.Text += "Retrieving Management Group"
+$Global:OutputTextBlock.Text += "Retrieving Management Group\n"
 $ManagementGroup = Get-SCOMManagementGroup
 Write-Host "Retrieving Management Packs"
-$Global:OutputTextBlock.Text += "Retrieving Management Packs"
+$Global:OutputTextBlock.Text += "Retrieving Management Packs\n"
 $ManagementPacks = Get-SCOMManagementPack
 Write-Host "Retrieving Management Servers"
-$Global:OutputTextBlock.Text += "Retrieving Management Servers"
+$Global:OutputTextBlock.Text += "Retrieving Management Servers\n"
 $ManagementServers = Get-SCOMManagementServer
 Write-Host "Retrieving Monitors"
-$Global:OutputTextBlock.Text += "Retrieving Monitors"
+$Global:OutputTextBlock.Text += "Retrieving Monitors\n"
 $Monitors = Get-SCOMMonitor
 Write-Host "Retrieving Rules"
-$Global:OutputTextBlock.Text += "Retrieving Rules"
+$Global:OutputTextBlock.Text += "Retrieving Rules\n"
 $Rules = Get-SCOMRule
 
 # Check to see if the Reporting Server Site is OK 
