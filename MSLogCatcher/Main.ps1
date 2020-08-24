@@ -42,6 +42,7 @@ param (
   [int32] $LogAge,
   [String[]] $Products
 )
+
 $ErrorActionPreference = "SilentlyContinue"
 
 $Global:scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
@@ -66,12 +67,13 @@ if((Test-Path $ZipOutput) -eq $False)
 switch ($Quiet) {
     $true
     {
-      Write-Host $Products
+      $Global:Quiet = $true
       $Global:productList = $Products
       . $scriptPath\General\CLI.ps1 -Products $Products
     }
     Default
     {
+      $Global:Quiet = $false
       . $scriptPath\General\UI.ps1
     }
   }
