@@ -15,7 +15,8 @@ $Global:AlertSubscriptionGuid = "#455329E9-3C18-BB5B-D9B8-B5EA0DF8FCDC"
 
 $Global:SecondsToSleepForTrace = 900
 
-$Global:Scenario1 = "Communication issue"
-$Global:Scenario2 = "Subscription issue"
+$Global:Scenario1 = "Communication"
+$Global:Scenario2 = "Subscription"
+$Global:Scenario3 = "Config/Workflow loading"
 
 $Global:CurrentScenario = ""

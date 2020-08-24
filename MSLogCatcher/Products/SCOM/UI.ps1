@@ -11,6 +11,7 @@ $Global:StatusLabel = $xamlReader.FindName("StatusLabel")
 $ScenarioComboBox = $xamlReader.FindName("ScenarioComboBox")
 $ScenarioComboBox.Items.Add($Global:Scenario1) | Out-Null
 $ScenarioComboBox.Items.Add($Global:Scenario2) | Out-Null
+$ScenarioComboBox.Items.Add($Global:Scenario3) | Out-Null
 
 $StartTraceButton = $xamlReader.FindName("StartTraceButton")
 $StartTraceButton.add_click({
