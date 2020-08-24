@@ -37,14 +37,17 @@ else
 }
 
 $TraceDurationInSecondsTextBox.Add_TextChanged({
-    $durationSeconds = $TraceDurationInSecondsTextBox.Text -as [int]
-    if($durationSeconds -gt 0)
+    if([string]::IsNullOrEmpty($TraceDurationInSecondsTextBox.Text) -eq $false)
     {
-        $StopTraceButton.IsEnabled = $false
-    }
-    else
-    {
-        $StopTraceButton.IsEnabled = $true
+        $durationSeconds = $TraceDurationInSecondsTextBox.Text -as [int]
+        if($durationSeconds -gt 0)
+        {
+            $StopTraceButton.IsEnabled = $false
+        }
+        else
+        {
+            $StopTraceButton.IsEnabled = $true
+        }
     }
 })
 
