@@ -20,6 +20,6 @@ $Global:Scenario3 = "Config/Workflow loading"
 $Global:CurrentScenario = ""
 
 # (default) variables for quite mode
-$Global:SecondsToSleepForTrace = 5
+$Global:SecondsToSleepForTrace = 900
 $Global:CollectLogs = $true
 $Global:CurrentScenario = $Scenario1

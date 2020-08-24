@@ -6,6 +6,48 @@ $Global:OutputTextBlock = $xamlReader.FindName("OutputTextBlock")
 $TraceDurationInSecondsTextBox = $xamlReader.FindName("TraceDurationInSecondsTextBox")
 $TraceDurationInSecondsTextBox.Text = $Global:SecondsToSleepForTrace
 
+$StopTraceButton = $xamlReader.FindName("StopTraceButton")
+$StopTraceButton.add_click({
+    switch ($Global:CurrentScenario)
+    {
+        $Global:Scenario1
+        {
+            StartCommunicationTracingStop
+        }
+        $Global:Scenario2
+        {
+            StartSubscriptionTracingStop
+        }
+        $Global:Scenario3
+        {
+            StartConfigAndWorkflowLoadingTracingStop
+        }
+    }
+    $Global:CurrentScenario = ""
+})
+
+$durationSeconds = $Global:SecondsToSleepForTrace -as [int]
+if($durationSeconds -gt 0)
+{
+    $StopTraceButton.IsEnabled = $false
+}
+else
+{
+    $StopTraceButton.IsEnabled = $true
+}
+
+$TraceDurationInSecondsTextBox.Add_TextChanged({
+    $durationSeconds = $TraceDurationInSecondsTextBox.Text -as [int]
+    if($durationSeconds -gt 0)
+    {
+        $StopTraceButton.IsEnabled = $false
+    }
+    else
+    {
+        $StopTraceButton.IsEnabled = $true
+    }
+})
+
 $Global:StatusLabel = $xamlReader.FindName("StatusLabel")
 
 $ScenarioComboBox = $xamlReader.FindName("ScenarioComboBox")
@@ -33,26 +75,6 @@ $StartTraceButton.add_click({
             StartConfigAndWorkflowLoadingTracing($TraceDurationInSecondsTextBox.Text)
         }
     }
-})
-
-$StopTraceButton = $xamlReader.FindName("StopTraceButton")
-$StopTraceButton.add_click({
-    switch ($Global:CurrentScenario)
-    {
-        $Global:Scenario1
-        {
-            StartCommunicationTracingStop
-        }
-        $Global:Scenario2
-        {
-            StartSubscriptionTracingStop
-        }
-        $Global:Scenario3
-        {
-            StartConfigAndWorkflowLoadingTracingStop
-        }
-    }
-    $Global:CurrentScenario = ""
 })
 
 $CollectSCOMDataButton = $xamlReader.FindName("CollectSCOMDataButton")
