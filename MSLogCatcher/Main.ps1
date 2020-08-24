@@ -37,7 +37,7 @@ To change AGE of logs and Sites that are collecter:
 
 param (
   [Parameter()]
-  [bool] $Quiet,
+  [switch] $Quiet,
   [String] $ZipLocation,
   [int32] $LogAge,
   [String[]] $Products
@@ -56,17 +56,22 @@ $Global:ToolLog = "$scriptPath\CollectedLogs\ToolLog.log"
 $Global:ZipOutput = "$scriptPath\CollectedLogs" #if you want to revert to Original replace with : $Global:ZipOutput = "$scriptPath"
 $Global:DefaultMaxDays = "10"
 
+Remove-Item "$($Global:ZipOutput)\*" -Recurse -Force
+
 if((Test-Path $ZipOutput) -eq $False)
 {
   New-Item -ItemType "directory" -Path $ZipOutput
 }
 
 switch ($Quiet) {
-    $true {
+    $true
+    {
+      Write-Host $Products
       $Global:productList = $Products
-      . $scriptPath\General\CLI.ps1
+      . $scriptPath\General\CLI.ps1 -Products $Products
     }
-    Default {
+    Default
+    {
       . $scriptPath\General\UI.ps1
     }
   }

@@ -5,8 +5,8 @@ param (
     [String[]] $Products
 )
 
-if (!$Products)
-{ 
+if ($Products.Length -gt 0)
+{
     foreach($product in $Products)
     {
         . "$($Global:scriptPath)\Products\$($product)\CLI.ps1"
@@ -19,3 +19,9 @@ else
         . "$($Global:scriptPath)\Products\$($product)\CLI.ps1"
     }
 }
+
+$timestamp = Get-Date -format "yyyy-M-dd_HH-mm-ss"
+Add-Type -assembly "System.Io.Compression.FileSystem"
+[Io.Compression.ZipFile]::CreateFromDirectory($Global:ZipOutput, "$($Global:ZipOutput)\..\output-$($timestamp).zip")
+Remove-Item "$($Global:ZipOutput)\*" -Recurse -Force
+Write-Host "ZIP File to send is: $($Global:ZipOutput)\..\output-$($timestamp).zip"

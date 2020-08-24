@@ -1,6 +1,6 @@
 function StartCommunicationTracing($durationInSeconds)
 {
-    $Global:StatusLabel.Text = "RUNNING"
+    $Global:StatusLabel.Content = "RUNNING"
     $durationInSeconds = $durationInSeconds -as [int]
     $msservices = @("HealthService")
     Get-Service $msservices | Stop-Service -PassThru
@@ -13,36 +13,36 @@ function StartCommunicationTracing($durationInSeconds)
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -start HSCoreTrace -guid $Global:HSCoreProviderGuid -f "$($env:WINDIR)\Logs\OpsMgrTrace\HSCoreTrace.etl" -ft 2 -flag 0x3FFFFFFF -level 4 -cir 999
     cmd.exe /c "netsh trace start capture=yes persistent=yes filemode=circular maxSize=1000MB traceFile=$($Global:ZipOutput)\$($Env:COMPUTERNAME)_NetworkTrace.etl"
     Write-Host "We are starting."
-    $Global:OutputTextBlock.Text += "We are starting.\n"
+    $Global:OutputTextBlock.Text += "We are starting.`n"
     if($durationInSeconds -gt 0)
     {
         Start-Sleep -Seconds $durationInSeconds
-        $Global:StatusLabel.Text = "STOPPING"
+        $Global:StatusLabel.Content = "STOPPING"
         cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop HSCoreTrace
         cmd.exe /c "netsh trace stop"
         cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\FormatTracing.cmd"
         Copy-Item -Path "$($env:WINDIR)\Logs\OpsMgrTrace\HSCoreTrace.log" -Destination "$($Global:ZipOutput)\HSCoreTrace.log"
         Write-Host "We finished."
-        $Global:OutputTextBlock.Text += "We are finishing.\n"
-        $Global:StatusLabel.Text = "FINISHED"
+        $Global:OutputTextBlock.Text += "We are finishing.`n"
+        $Global:StatusLabel.Content = "FINISHED"
     }
 }
 
 function StartCommunicationTracingStop()
 {
-    $Global:StatusLabel.Text = "STOPPING"
+    $Global:StatusLabel.Content = "STOPPING"
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop HSCoreTrace
     cmd.exe /c "netsh trace stop"
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\FormatTracing.cmd"
     Copy-Item -Path "$($env:WINDIR)\Logs\OpsMgrTrace\HSCoreTrace.log" -Destination "$($Global:ZipOutput)\HSCoreTrace.log"
     Write-Host "We finished."
-    $Global:OutputTextBlock.Text += "We finished.\n"
-    $Global:StatusLabel.Text = "FINISHED"
+    $Global:OutputTextBlock.Text += "We finished.`n"
+    $Global:StatusLabel.Content = "FINISHED"
 }
 
 function StartSubscriptionTracing($durationInSeconds)
 {
-    $Global:StatusLabel.Text = "RUNNING"
+    $Global:StatusLabel.Content = "RUNNING"
     $durationInSeconds = $durationInSeconds -as [int]
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop NotificationsTrace
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop AlertSubscriptionTrace
@@ -56,7 +56,7 @@ function StartSubscriptionTracing($durationInSeconds)
     if($durationInSeconds -gt 0)
     {
         Start-Sleep -Seconds $durationInSeconds
-        $Global:StatusLabel.Text = "STOPPING"
+        $Global:StatusLabel.Content = "STOPPING"
         cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop NotificationsTrace
         cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop AlertSubscriptionTrace
         cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\FormatTracing.cmd"
@@ -64,13 +64,13 @@ function StartSubscriptionTracing($durationInSeconds)
         Copy-Item -Path "$($env:WINDIR)\Logs\OpsMgrTrace\AlertSubscriptionTrace.log" -Destination "$($Global:ZipOutput)\AlertSubscriptionTrace.log"
         Write-Host "We finished."
         $Global:OutputTextBlock.Text += "We are finishing.\n"
-        $Global:StatusLabel.Text = "FINISHED"
+        $Global:StatusLabel.Content = "FINISHED"
     }
 }
 
 function StartSubscriptionTracingStop()
 {
-    $Global:StatusLabel.Text = "STOPPING"
+    $Global:StatusLabel.Content = "STOPPING"
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop NotificationsTrace
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop AlertSubscriptionTrace
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\FormatTracing.cmd"
@@ -78,12 +78,12 @@ function StartSubscriptionTracingStop()
     Copy-Item -Path "$($env:WINDIR)\Logs\OpsMgrTrace\AlertSubscriptionTrace.log" -Destination "$($Global:ZipOutput)\AlertSubscriptionTrace.log"
     Write-Host "We finished."
     $Global:OutputTextBlock.Text += "We finished.\n"
-    $Global:StatusLabel.Text = "FINISHED"
+    $Global:StatusLabel.Content = "FINISHED"
 }
 
 function StartConfigAndWorkflowLoadingTracing($durationInSeconds)
 {
-    $Global:StatusLabel.Text = "RUNNING"
+    $Global:StatusLabel.Content = "RUNNING"
     $durationInSeconds = $durationInSeconds -as [int]
     $msservices = @("HealthService")
     Get-Service $msservices | Stop-Service -PassThru
@@ -100,28 +100,31 @@ function StartConfigAndWorkflowLoadingTracing($durationInSeconds)
     if($durationInSeconds -gt 0)
     {
         Start-Sleep -Seconds $durationInSeconds
-        $Global:StatusLabel.Text = "STOPPING"
+        $Global:StatusLabel.Content = "STOPPING"
         cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop HSCoreTrace
         cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\FormatTracing.cmd"
         Copy-Item -Path "$($env:WINDIR)\Logs\OpsMgrTrace\HSCoreTrace.log" -Destination "$($Global:ZipOutput)\HSCoreTrace.log"
         Write-Host "We finished."
         $Global:OutputTextBlock.Text += "We are finishing.\n"
-        $Global:StatusLabel.Text = "FINISHED"
+        $Global:StatusLabel.Content = "FINISHED"
     }
 }
 
 function StartConfigAndWorkflowLoadingTracingStop()
 {
-    $Global:StatusLabel.Text = "STOPPING"
+    $Global:StatusLabel.Content = "STOPPING"
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop HSCoreTrace
     cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\FormatTracing.cmd"
     Copy-Item -Path "$($env:WINDIR)\Logs\OpsMgrTrace\HSCoreTrace.log" -Destination "$($Global:ZipOutput)\HSCoreTrace.log"
+    [Io.Compression.ZipFile]::CreateFromDirectory($Global:ZipOutput, "$($Global:ZipOutput)\..\output-$(Get-Date -format 'yyyy-M-dd').zip")
     Write-Host "We finished."
     $Global:OutputTextBlock.Text += "We finished.\n"
-    $Global:StatusLabel.Text = "FINISHED"
+    $Global:StatusLabel.Content = "FINISHED"
 }
 
 function CollectSCOMData()
 {
+    $Global:StatusLabel.Content = "RUNNING"
     . "$($Global:scriptPath)\Products\SCOM\HealthCheck.ps1"
+    $Global:StatusLabel.Content = "FINISHED"
 }
