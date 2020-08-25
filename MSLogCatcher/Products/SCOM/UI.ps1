@@ -3,11 +3,13 @@
 
 $Global:OutputTextBlock = $xamlReader.FindName("OutputTextBlock")
 
+$CustomInputTextBox = $xamlReader.FindName("CustomInputTextBox")
+
 $TraceDurationInSecondsTextBox = $xamlReader.FindName("TraceDurationInSecondsTextBox")
 $TraceDurationInSecondsTextBox.Text = $Global:SecondsToSleepForTrace
 
 $StopTraceButton = $xamlReader.FindName("StopTraceButton")
-$StopTraceButton.add_click({
+$StopTraceButton.Add_Click({
     switch ($Global:CurrentScenario)
     {
         $Global:Scenario1
@@ -21,6 +23,10 @@ $StopTraceButton.add_click({
         $Global:Scenario3
         {
             StartConfigAndWorkflowLoadingTracingStop
+        }
+        $Global:Scenario4
+        {
+            StartWorkflowTracingStop
         }
     }
     $Global:CurrentScenario = ""
@@ -57,30 +63,53 @@ $ScenarioComboBox = $xamlReader.FindName("ScenarioComboBox")
 $ScenarioComboBox.Items.Add($Global:Scenario1) | Out-Null
 $ScenarioComboBox.Items.Add($Global:Scenario2) | Out-Null
 $ScenarioComboBox.Items.Add($Global:Scenario3) | Out-Null
+$ScenarioComboBox.Items.Add($Global:Scenario4) | Out-Null
+
+$ScenarioComboBox.Add_DropDownClosed({
+    
+    switch ($ScenarioComboBox.SelectedValue)
+    {
+        $Global:Scenario4
+        {
+            $CustomInputTextBox.Text = "Enter the (internal) name (not DisplayName) of the Workflow here ..."
+            $CustomInputTextBox.IsEnabled = $true
+        }
+        default
+        {
+            $CustomInputTextBox.Text = "Depending on the selected scenario, we might need custom input here"
+            $CustomInputTextBox.IsEnabled = $false
+        }
+    }
+})
 
 $StartTraceButton = $xamlReader.FindName("StartTraceButton")
-$StartTraceButton.add_click({
+$StartTraceButton.Add_Click({
     switch ($ScenarioComboBox.SelectedValue)
     {
         $Global:Scenario1
         {
             $Global:CurrentScenario = $Global:Scenario1
-            StartCommunicationTracing($TraceDurationInSecondsTextBox.Text)
+            StartCommunicationTracing($TraceDurationInSecondsTextBox.Text.Trim())
         }
         $Global:Scenario2
         {
             $Global:CurrentScenario = $Global:Scenario2
-            StartSubscriptionTracing($TraceDurationInSecondsTextBox.Text)
+            StartSubscriptionTracing($TraceDurationInSecondsTextBox.Text.Trim())
         }
         $Global:Scenario3
         {
             $Global:CurrentScenario = $Global:Scenario3
-            StartConfigAndWorkflowLoadingTracing($TraceDurationInSecondsTextBox.Text)
+            StartConfigAndWorkflowLoadingTracing($TraceDurationInSecondsTextBox.Text.Trim())
+        }
+        $Global:Scenario4
+        {
+            $Global:CurrentScenario = $Global:Scenario4
+            StartWorkflowTracing -workflowName $CustomInputTextBox.Text.Trim() -durationInSeconds $TraceDurationInSecondsTextBox.Text.Trim()
         }
     }
 })
 
 $CollectSCOMDataButton = $xamlReader.FindName("CollectSCOMDataButton")
-$CollectSCOMDataButton.add_click({
+$CollectSCOMDataButton.Add_Click({
     CollectSCOMData
 })

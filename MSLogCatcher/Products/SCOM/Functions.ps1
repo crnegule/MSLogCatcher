@@ -122,6 +122,135 @@ function StartConfigAndWorkflowLoadingTracingStop()
     $Global:StatusLabel.Content = "FINISHED"
 }
 
+function StartWorkflowTracing
+{
+    Param(
+        [string]$workflowName,
+        [string]$durationInSeconds
+    )
+
+    if(-not (Get-Module | Where-Object {$_.Name -eq "OperationsManager"}))
+    {
+        Write-Host "The Operations Manager Module was not found...importing the Operations Manager Module"
+        Import-Module OperationsManager
+    }
+    else
+    {
+        Write-Host "The Operations Manager Module is loaded"
+    }
+
+    $ManagementPackId = "SCOMCustomMSCollectorWorkflowTracingMp"
+    $ManagementPackName = "SCOM Custom MSCollector Workflow Tracing MP"
+    $ManagementPackDescription = "Auto Generated Management Pack for SCOM MSCollector Workflow Tracing (should be deleted after troubleshooting)"
+    $mg = New-Object Microsoft.EnterpriseManagement.ManagementGroup("localhost")
+    $mp = $mg.GetManagementPacks($ManagementPackId)
+
+    if($null -ne $mp)
+    {
+        Remove-SCOMManagementPack -ManagementPack $mp
+    }
+
+    $MpStore = New-Object Microsoft.EnterpriseManagement.Configuration.IO.ManagementPackFileStore
+    $mp = New-Object Microsoft.EnterpriseManagement.Configuration.ManagementPack($ManagementPackId, $ManagementPackName, (New-Object Version(1, 0, 0)), $MpStore)
+    $mg.ImportManagementPack($mp)
+    $mp = $mg.GetManagementPacks($ManagementPackId)[0]
+    $mp.DisplayName = $ManagementPackName
+    $mp.Description = $ManagementPackDescription
+    $mp.AcceptChanges()
+
+    $workflow = Get-SCOMDiscovery -Name $WorkflowName
+    if($null -ne $workflow)
+    {
+        $target = Get-SCOMClass -Id $workflow.Target.Id
+        $override = New-Object Microsoft.EnterpriseManagement.Configuration.ManagementPackDiscoveryPropertyOverride($mp, "$($ManagementPackId)_$($workflow.Name)_TraceEnabledOverride")
+        $override.Discovery = $workflow
+    }
+    else
+    {
+        $workflow = Get-SCOMMonitor -Name $WorkflowName
+        if($null -ne $workflow)
+        {
+            $target = Get-SCOMClass -Id $workflow.Target.Id
+            $override = New-Object Microsoft.EnterpriseManagement.Configuration.ManagementPackMonitorPropertyOverride($mp, "$($ManagementPackId)_$($workflow.Name)_TraceEnabledOverride")
+            $override.Monitor = $workflow
+        }
+        else
+        {
+            $workflow = Get-SCOMRule -Name $WorkflowName
+            if($null -ne $workflow)
+            {
+                $target = Get-SCOMClass -Id $workflow.Target.Id
+                $override = New-Object Microsoft.EnterpriseManagement.Configuration.ManagementPackRulePropertyOverride($mp, "$($ManagementPackId)_$($workflow.Name)_TraceEnabledOverride")
+                $override.Rule = $workflow
+            }
+        }
+    }
+
+    if($null -ne $workflow)
+    {
+        $override.Property = 'TraceEnabled'
+        $override.Value = 'true'
+        $override.Context = $target
+        $override.DisplayName = "$($ManagementPackId)_$($workflow.Name)_TraceEnabledOverride"
+        $mp.Verify()
+        $mp.AcceptChanges()
+        
+        $Global:StatusLabel.Content = "RUNNING"
+        $durationInSeconds = $durationInSeconds -as [int]
+        $msservices = @("HealthService")
+        Get-Service $msservices | Stop-Service -PassThru
+        Get-Service $msservices | Start-Service -PassThru
+        Start-Sleep -Seconds 1
+        cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop WorkflowTrace
+        cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\StopTracing.cmd"
+        Remove-Item -Path "$env:WINDIR\Logs\OpsMgrTrace\*"
+        Start-Sleep -Seconds 2
+        cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -start WorkflowTrace -guid $Global:HSCoreProviderGuid -f "$($env:WINDIR)\Logs\OpsMgrTrace\WorkflowTrace.etl" -ft 2 -flag 0x3FFFFFFF -level 4 -cir 999
+        Write-Host "We are starting."
+        $Global:OutputTextBlock.Text += "We are starting.\n"
+        if($durationInSeconds -gt 0)
+        {
+            Start-Sleep -Seconds $durationInSeconds
+            $Global:StatusLabel.Content = "STOPPING"
+            cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop WorkflowTrace
+            cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\FormatTracing.cmd"
+            Copy-Item -Path "$($env:WINDIR)\Logs\OpsMgrTrace\WorkflowTrace.log" -Destination "$($Global:ZipOutput)\WorkflowTrace.log"
+            Remove-SCOMManagementPack -ManagementPack $mp
+            Write-Host "We finished."
+            $Global:OutputTextBlock.Text += "We are finishing.\n"
+            $Global:StatusLabel.Content = "FINISHED"
+        }
+    }
+}
+
+function StartWorkflowTracingStop()
+{
+    $ManagementPackId = "SCOMCustomMSCollectorWorkflowTracingMp"
+    $Global:StatusLabel.Content = "STOPPING"
+    cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\TraceLogSM.exe" -stop WorkflowTrace
+    cmd.exe /c "$($Global:SCOMInstallDirectory)Tools\FormatTracing.cmd"
+    Copy-Item -Path "$($env:WINDIR)\Logs\OpsMgrTrace\WorkflowTrace.log" -Destination "$($Global:ZipOutput)\WorkflowTrace.log"
+    [Io.Compression.ZipFile]::CreateFromDirectory($Global:ZipOutput, "$($Global:ZipOutput)\..\output-$(Get-Date -format 'yyyy-M-dd').zip")
+    if(-not (Get-Module | Where-Object {$_.Name -eq "OperationsManager"}))
+    {
+        Write-Host "The Operations Manager Module was not found...importing the Operations Manager Module"
+        Import-Module OperationsManager
+    }
+    else
+    {
+        Write-Host "The Operations Manager Module is loaded"
+    }
+    $mg = New-Object Microsoft.EnterpriseManagement.ManagementGroup("localhost")
+    $mp = $mg.GetManagementPacks($ManagementPackId)
+    if($null -ne $mp)
+    {
+        Remove-SCOMManagementPack -ManagementPack $mp
+    }
+    Write-Host "We finished."
+    $Global:OutputTextBlock.Text += "We finished.\n"
+    $Global:StatusLabel.Content = "FINISHED"
+}
+
 function CollectSCOMData()
 {
     $Global:StatusLabel.Content = "RUNNING"

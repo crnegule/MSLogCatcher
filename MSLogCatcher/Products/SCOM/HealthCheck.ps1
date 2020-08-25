@@ -9,14 +9,14 @@ $StartTime = Get-Date
 
 # Check if the OperationsManager Module is loaded
 if(-not (Get-Module | Where-Object {$_.Name -eq "OperationsManager"}))
-    {
-    "The Operations Manager Module was not found...importing the Operations Manager Module"
-    Import-module OperationsManager
-    }
-        else
-	{
-	"The Operations Manager Module is loaded"
-	}
+{
+    Write-Host "The Operations Manager Module was not found...importing the Operations Manager Module"
+    Import-Module OperationsManager
+}
+else
+{
+    Write-Host "The Operations Manager Module is loaded"
+}
 
 # Connect to localhost when running on the management server or define a server to connect to.
 $connect = New-SCOMManagementGroupConnection –ComputerName localhost

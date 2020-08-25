@@ -22,5 +22,9 @@ if([string]::IsNullOrEmpty($Global:CurrentScenario) -eq $false)
         {
             StartConfigAndWorkflowLoadingTracing($Global:SecondsToSleepForTrace)
         }
+        $Global:Scenario4
+        {
+            StartWorkflowTracing -workflowName $Global:WorkflowNameToTrace -durationInSeconds $Global:SecondsToSleepForTrace
+        }
     }
 }

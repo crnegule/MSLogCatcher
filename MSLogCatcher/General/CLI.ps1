@@ -20,8 +20,11 @@ else
     }
 }
 
-$timestamp = Get-Date -format "yyyy-M-dd_HH-mm-ss"
-Add-Type -assembly "System.Io.Compression.FileSystem"
-[Io.Compression.ZipFile]::CreateFromDirectory($Global:ZipOutput, "$($Global:ZipOutput)\..\output-$($timestamp).zip")
-Remove-Item "$($Global:ZipOutput)\*" -Recurse -Force
-Write-Host "ZIP File to send is: $($Global:ZipOutput)\..\output-$($timestamp).zip"
+if(Test-Path "$($Global:ZipOutput)\*" -eq $true)
+{
+    $timestamp = Get-Date -format "yyyy-M-dd_HH-mm-ss"
+    Add-Type -assembly "System.Io.Compression.FileSystem"
+    [Io.Compression.ZipFile]::CreateFromDirectory($Global:ZipOutput, "$($Global:ZipOutput)\..\output-$($timestamp).zip")
+    Remove-Item "$($Global:ZipOutput)\*" -Recurse -Force
+    Write-Host "ZIP File to send is: $($Global:ZipOutput)\..\output-$($timestamp).zip"
+}
