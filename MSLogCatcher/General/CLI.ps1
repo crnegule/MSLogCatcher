@@ -20,7 +20,7 @@ else
     }
 }
 
-if(Test-Path "$($Global:ZipOutput)\*" -eq $true)
+if((Test-Path "$($Global:ZipOutput)\*") -eq $true)
 {
     $timestamp = Get-Date -format "yyyy-M-dd_HH-mm-ss"
     Add-Type -assembly "System.Io.Compression.FileSystem"
