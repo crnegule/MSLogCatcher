@@ -54,7 +54,7 @@ If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 $Global:FormLocation = "$scriptPath\Form\Form.xml"
 $Global:ToolLog = "$scriptPath\CollectedLogs\ToolLog.log"
-$Global:ZipOutput = "$scriptPath\CollectedLogs" #if you want to revert to Original replace with : $Global:ZipOutput = "$scriptPath"
+$Global:ZipOutput = "$scriptPath\CollectedLogs"
 $Global:DefaultMaxDays = "10"
 
 Remove-Item "$($Global:ZipOutput)\*" -Recurse -Force
@@ -62,6 +62,17 @@ Remove-Item "$($Global:ZipOutput)\*" -Recurse -Force
 if((Test-Path $ZipOutput) -eq $False)
 {
   New-Item -ItemType "directory" -Path $ZipOutput
+}
+
+function Write-OutputToLog
+{
+  Param(
+        [string]$output
+    )
+
+    Write-Host $output
+    $viewModel.OutputLogData += $output
+    $output | Out-File $ToolLog -Append
 }
 
 switch ($Quiet) {

@@ -1,6 +1,9 @@
 . $scriptPath\Products\SCOM\Defaults.ps1
 . $scriptPath\Products\SCOM\Functions.ps1
 
+$viewModel = New-Object PSObject -Property @{OutputLogData = Get-Content -Path $Global:ToolLog }
+$xamlReader.DataContext = $viewModel
+
 $Global:OutputTextBlock = $xamlReader.FindName("OutputTextBlock")
 
 $CustomInputTextBox = $xamlReader.FindName("CustomInputTextBox")
@@ -112,4 +115,9 @@ $StartTraceButton.Add_Click({
 $CollectSCOMDataButton = $xamlReader.FindName("CollectSCOMDataButton")
 $CollectSCOMDataButton.Add_Click({
     CollectSCOMData
+
+    $xamlReader.Dispatcher.Invoke(
+        [action]{$OutputTextBlock.AddText("$(Get-Content -Path $Global:ToolLog)`n")},
+        "Render"
+    )
 })

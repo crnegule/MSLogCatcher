@@ -24,7 +24,6 @@ foreach($product in Get-ChildItem "$scriptPath\Products")
 $xamlReader.Add_Closing({
     if((Test-Path "$($Global:ZipOutput)\*") -eq $true)
     {
-        Write-Host "WE HAVE!"
         $timestamp = Get-Date -format "yyyy-M-dd_HH-mm-ss"
         Add-Type -assembly "System.Io.Compression.FileSystem"
         [Io.Compression.ZipFile]::CreateFromDirectory($Global:ZipOutput, "$($Global:ZipOutput)\..\output-$($timestamp).zip")

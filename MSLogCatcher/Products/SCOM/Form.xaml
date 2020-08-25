@@ -11,7 +11,7 @@
             <Label Name="StatusLabel" HorizontalContentAlignment="Center" Content="STOPPED" HorizontalAlignment="Left" Margin="243,121,0,0" VerticalAlignment="Top" Width="228"/>
             <Border BorderThickness="3" BorderBrush="Black" Margin="0,166,0,10">
                 <ScrollViewer>
-                    <TextBlock Name="OutputTextBlock" HorizontalAlignment="Left" Margin="1,1,0,0" TextWrapping="Wrap" Text="..." VerticalAlignment="Top" Height="178" Width="725" FontSize="12"/>
+                    <TextBlock xml:space="preserve" Name="OutputTextBlock" HorizontalAlignment="Left" Margin="1,1,0,0" TextWrapping="Wrap" Text="{Binding OutputLogData}" VerticalAlignment="Top" Height="178" Width="725" FontSize="12"/>
                 </ScrollViewer>
             </Border>
             <TextBox Name="CustomInputTextBox" HorizontalAlignment="Left" Height="29" Margin="10,84,0,0" TextWrapping="NoWrap" Text="Depending on the selected scenario, we might need custom input here" VerticalAlignment="Top" Width="729" IsEnabled="False"/>

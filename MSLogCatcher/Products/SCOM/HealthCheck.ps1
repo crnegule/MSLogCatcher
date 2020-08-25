@@ -10,12 +10,12 @@ $StartTime = Get-Date
 # Check if the OperationsManager Module is loaded
 if(-not (Get-Module | Where-Object {$_.Name -eq "OperationsManager"}))
 {
-    Write-Host "The Operations Manager Module was not found...importing the Operations Manager Module"
+    Write-OutputToLog "The Operations Manager Module was not found...importing the Operations Manager Module"
     Import-Module OperationsManager
 }
 else
 {
-    Write-Host "The Operations Manager Module is loaded"
+    Write-OutputToLog "The Operations Manager Module is loaded"
 }
 
 # Connect to localhost when running on the management server or define a server to connect to.
@@ -107,29 +107,21 @@ function Run-OpDWSQLQuery
 
 # Retrieve the Data for the Majority of the Report
 # Truth is we probably don't need all of this data, but even on a busy environment it only takes a couple of mins to run.
-Write-Host "Retrieving Agents"
-$Global:OutputTextBlock.Text += "Retrieving Agents`n"
+Write-OutputToLog "Retrieving Agents"
 $Agents = Get-SCOMAgent
-Write-Host "Retrieving Alerts"
-$Global:OutputTextBlock.Text += "Retrieving Alerts`n"
+Write-OutputToLog "Retrieving Alerts"
 $Alerts = Get-SCOMAlert
-Write-Host "Retrieving Groups"
-$Global:OutputTextBlock.Text += "Retrieving Groups`n"
+Write-OutputToLog "Retrieving Groups"
 $Groups = Get-SCOMGroup
-Write-Host "Retrieving Management Group"
-$Global:OutputTextBlock.Text += "Retrieving Management Group`n"
+Write-OutputToLog "Retrieving Management Group"
 $ManagementGroup = Get-SCOMManagementGroup
-Write-Host "Retrieving Management Packs"
-$Global:OutputTextBlock.Text += "Retrieving Management Packs`n"
+Write-OutputToLog "Retrieving Management Packs"
 $ManagementPacks = Get-SCOMManagementPack
-Write-Host "Retrieving Management Servers"
-$Global:OutputTextBlock.Text += "Retrieving Management Servers`n"
+Write-OutputToLog "Retrieving Management Servers"
 $ManagementServers = Get-SCOMManagementServer
-Write-Host "Retrieving Monitors"
-$Global:OutputTextBlock.Text += "Retrieving Monitors`n"
+Write-OutputToLog "Retrieving Monitors"
 $Monitors = Get-SCOMMonitor
-Write-Host "Retrieving Rules"
-$Global:OutputTextBlock.Text += "Retrieving Rules`n"
+Write-OutputToLog "Retrieving Rules"
 $Rules = Get-SCOMRule
 
 # Check to see if the Reporting Server Site is OK 
@@ -559,7 +551,7 @@ $ReportOutput += "<h2>Daily KPI</h2>"
 $ReportOutput += $AllStats | Select "Open Alerts", "Groups", "Monitors", "Rules", "State Changes Yesterday" | ConvertTo-HTML -fragment
 
 # Retrieve and Insert the Results for the Management Packs that have been modified into the Report
-Write-Host "Checking for Management Packs that have been modified in the last 24 hours"
+Write-OutputToLog "Checking for Management Packs that have been modified in the last 24 hours"
 
 $ReportOutput += "<br>"
 $ReportOutput += "<h2>Management Packs Modified in the Last 24 Hours</h2>"
@@ -575,7 +567,7 @@ $ReportOutput += "<h2>Management Packs Modified in the Last 24 Hours</h2>"
 
 # Retrieve and Insert the Results for the Default Management Pack into the Report
 # This 'should be empty'...don't store stuff here!
-Write-Host "Checking for the Default Management Pack for Overrides"
+Write-OutputToLog "Checking for the Default Management Pack for Overrides"
 $ReportOutput += "<br>"
 $ReportOutput += "<h2>The Default Management Pack</h2>"
 
@@ -606,7 +598,7 @@ $ReportOutput += $($defaultMP.GetOverrides() | ? {$excludedID -NotContains $_.ID
 
 
 # Show all Agents that are in an Uninitialized State
-Write-Host "Checking for Uninitialized Agents"
+Write-OutputToLog "Checking for Uninitialized Agents"
 
 $ReportOutput += "<br>"
 $ReportOutput += "<h2>Uninitialized Agents</h2>"
@@ -623,7 +615,7 @@ $ReportOutput += "<h2>Uninitialized Agents</h2>"
 # Show a Summary of all Agents States
 $healthy = $uninitialized = $warning = $critical = 0
 
-Write-Host "Checking Agent States"
+Write-OutputToLog "Checking Agent States"
 
 $ReportOutput += "<br>"
 $ReportOutput += "<h3>Agent Stats</h3>"
@@ -650,7 +642,7 @@ $AllAgents = @()
 $ReportOutput += $AllAgents | Select "Agents Healthy", "Agents Warning", "Agents Critical", "Agents Uninitialized", "Total Agents" | ConvertTo-HTML -fragment
 
 # Agent Pending Management States
-Write-Host "Checking Agent Pending Management States"
+Write-OutputToLog "Checking Agent Pending Management States"
 
 $ReportOutput += "<br>"
 $ReportOutput += "<h3>Agent Pending Management Summary</h3>"
@@ -714,7 +706,7 @@ $ReportOutput += $AllAlerts | Select "Warning", "Error", "Information", "Last 24
 # $ActionAccount = "YourGrouptoCheck"
 # Then replace all 5 occurrences below of $ManagementServer.ActionAccountIdentity with $ActionAccount
 
-Write-Host "Checking if the Action Account is a member of the Local Administrators Group for each Management Server"
+Write-OutputToLog "Checking if the Action Account is a member of the Local Administrators Group for each Management Server"
 
 $ReportOutput += "<br>"
 $ReportOutput += "<h2>SCOM Action Account</h2>"
@@ -734,12 +726,12 @@ $members | foreach {
 
  If ($admins.admin -match $ManagementServer.ActionAccountIdentity)
  {
- # Write-Host "The user $($ManagementServer.ActionAccountIdentity) is a Local Administrator on $ms"
+ # Write-OutputToLog "The user $($ManagementServer.ActionAccountIdentity) is a Local Administrator on $ms"
  $ReportOutput += "<p>The user $($ManagementServer.ActionAccountIdentity) is a Local Administrator on $ms</p>"
  }
  Else
  {
- # Write-Host "The user $($ManagementServer.ActionAccountIdentity) is NOT a Local Administrator on $ms"
+ # Write-OutputToLog "The user $($ManagementServer.ActionAccountIdentity) is NOT a Local Administrator on $ms"
  $ReportOutput += "<p><span style=`"color: `#CC0000;`">The user $($ManagementServer.ActionAccountIdentity) is NOT a Local Administrator on $ms</span></p>"
  }
 }
@@ -833,7 +825,7 @@ $ReportOutput += "<p>Total Script Run Time: $($TotalRunTime.hours) hrs $($TotalR
 # Close the Body of the Report
 $ReportOutput += "</body>"
 
-Write-Host "Saving HTML Report to $ReportPath"
+Write-OutputToLog "Saving HTML Report to $ReportPath"
 
 # Save the Final Report to a File
 ConvertTo-HTML -head $Head -body "$ReportOutput" | Out-File $ReportPath
